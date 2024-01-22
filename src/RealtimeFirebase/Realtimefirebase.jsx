@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { EmpData } from '../App'
-import { get, onValue, ref, remove } from 'firebase/database'
+import { endAt, get, onValue, orderByChild, query, ref, remove, startAt } from 'firebase/database'
 import { db } from './firebase'
 import bin from '../Component/images/bin.png'
 import edit from '../Component/images/editp.png'
@@ -20,6 +20,9 @@ const Realtimefirebase = () => {
     const setEditMode = empDatas.setEditMode
 
     const [noRecord, setNoRecord] = useState(false)
+    const [findEmp, setFindEmp] = useState('')
+    const [department, setDepartment] = useState('')
+    const [sortOrder, setSortOrder] = useState('asc');
 
     useEffect(() => {
         if (employees.length === 0) {
@@ -59,6 +62,66 @@ const Realtimefirebase = () => {
         remove(userRef).then()
     }
 
+    const handleFind = (e) => {
+        const findValue = e.target.value.toLowerCase();
+        setFindEmp(findValue)
+
+        const userRef = ref(db, "Employees")
+        const recentPostsRef = query(userRef, orderByChild('name'), startAt(findValue), endAt(findValue + '\uf8ff'))
+
+        onValue(recentPostsRef, (snapshot) => {
+            var list = []
+            snapshot.forEach((snapchild) => {
+                var id = snapchild.key
+                var data = snapchild.val()
+                var details = { id, ...data }
+                list.push(details)
+            })
+            setEmployees(list)
+        })
+
+    }
+    const handleDeptChange = (e) => {
+        const findValue = e.target.value
+        setDepartment(findValue)
+
+        const userRef = ref(db, "Employees")
+        const recentPostsRef = query(userRef, orderByChild('department'), startAt(findValue), endAt(findValue + '\uf8ff'))
+
+        onValue(recentPostsRef, (snapshot) => {
+            var list = []
+            snapshot.forEach((snapchild) => {
+                var id = snapchild.key
+                var data = snapchild.val()
+                var details = { id, ...data }
+                list.push(details)
+            })
+            setEmployees(list)
+        })
+    }
+
+    const sortEmployee = () => {
+        const userRef = ref(db, 'Employees');
+        const orderType = sortOrder === 'asc' ? 'desc' : 'asc';
+
+        const sortedPostsRef = query(userRef, orderByChild('name'));
+
+        onValue(sortedPostsRef, (snapshot) => {
+            var list = [];
+            snapshot.forEach((snapchild) => {
+                var id = snapchild.key;
+                var data = snapchild.val();
+                var details = { id, ...data };
+                list.push(details);
+            });
+            if (orderType === 'desc') {
+                list.reverse()
+            }
+            setEmployees(list);
+            setSortOrder(orderType)
+        });
+    };
+
     return (
         <>
             <section className='my-5'>
@@ -75,20 +138,26 @@ const Realtimefirebase = () => {
                                 <div className="d-flex align-items-center justify-content-between">
                                     <h3 className='m-0'>Real Time Firebase </h3>
                                     <div className="form-group col-3">
-                                        <input type="text" placeholder="Employee..." name='search'></input>
+                                        <input type="text" placeholder="Employee..." name='find' value={findEmp} onChange={handleFind}></input>
                                         <label>Find</label>
                                     </div>
                                     {/* <div className="form-group col-3">
                                         <input type="text" placeholder="Search Ott platform..." name='search'></input>
                                         <label>OTT</label>
                                     </div> */}
-                                    <button className='btn btn-dark bor-rad'>SORT<i className="fa-solid fa-circle-up ms-2"></i></button>
+                                    <button className='btn btn-dark bor-rad' onClick={sortEmployee}>SORT{sortOrder === 'asc' ? <i className="fa-solid fa-circle-up ms-2"></i> : <i className="fa-solid fa-circle-down ms-2"></i>}</button>
                                     <div className="form-group col-2">
-                                        <select className='bor-rad w-100 pyy-2'>
-                                            <option value="Term" className='pyy-2 bor-rad'>--Department--</option>
-                                            <option value="Yearly" className='pyy-2 bor-rad'>Yearly</option>
-                                            <option value="Quarterly" className='pyy-2 bor-rad'>Quarterly</option>
-                                            <option value="Monthly" className='pyy-2 bor-rad'>Monthly</option>
+                                        <select className='bor-rad w-100 pyy-2' value={department} onChange={handleDeptChange}>
+                                            <option value="" className='pyy-2 bor-rad'>--Department--</option>
+                                            <option value="Human Resources" className='pyy-2 bor-rad'>Human Resources</option>
+                                            <option value="Finance and Accounting" className='pyy-2 bor-rad'>Finance and Accounting</option>
+                                            <option value="Sales and Marketing" className='pyy-2 bor-rad'>Sales and Marketing</option>
+                                            <option value="Information Technology (IT)" className='pyy-2 bor-rad'>Information Technology (IT)</option>
+                                            <option value="Customer Support" className='pyy-2 bor-rad'>Customer Support</option>
+                                            <option value="Production" className='pyy-2 bor-rad'>Production</option>
+                                            <option value="Quality Control" className='pyy-2 bor-rad'>Quality Control</option>
+                                            <option value="Project Management" className='pyy-2 bor-rad'>Project Management</option>
+                                            <option value="Business Development" className='pyy-2 bor-rad'>Business Development</option>
                                         </select>
                                     </div>
                                 </div>

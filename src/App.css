@@ -148,9 +148,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input{
-  text-transform: capitalize;
-}
+
 .btn:focus{
   border: 1px solid transparent !important;
 }
