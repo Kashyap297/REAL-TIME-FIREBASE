@@ -145,7 +145,7 @@ const Realtimefirebase = () => {
                                         <input type="text" placeholder="Search Ott platform..." name='search'></input>
                                         <label>OTT</label>
                                     </div> */}
-                                    <button className='btn btn-dark bor-rad' onClick={sortEmployee}>SORT{sortOrder === 'asc' ? <i className="fa-solid fa-circle-up ms-2"></i> : <i className="fa-solid fa-circle-down ms-2"></i>}</button>
+                                    <button className='btn btn-dark bor-rad' onClick={sortEmployee}>{sortOrder === 'asc' ? "A - Z" : "Z - A"}{sortOrder === 'asc' ? <i className="fa-solid fa-circle-up ms-2"></i> : <i className="fa-solid fa-circle-down ms-2"></i>}</button>
                                     <div className="form-group col-2">
                                         <select className='bor-rad w-100 pyy-2' value={department} onChange={handleDeptChange}>
                                             <option value="" className='pyy-2 bor-rad'>--Department--</option>
