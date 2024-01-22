@@ -20,9 +20,9 @@ const Header = () => {
                             <li>
                                 <Link className="nav-link" aria-current="page" to='/products'>AddToCart</Link>
                             </li>
-                            {/* <li>
-                                <Link className="nav-link" aria-current="page" to='/'>Home</Link>
-                            </li> */}
+                            <li>
+                                <Link className="nav-link" aria-current="page" to='/realtimefirebase'>RealTimeFirebase</Link>
+                            </li>
                         </ul>
                     </header>
                 </div>
