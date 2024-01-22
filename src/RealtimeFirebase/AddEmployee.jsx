@@ -57,17 +57,17 @@ const AddEmployee = () => {
                 update(userRef, input).then()
                 setEditMode(false)
                 navigate(-1)
-                // setInput(init)
+                setInput(init)
             } else {
                 const userRef = ref(db, "Employees")
                 const newRef = push(userRef)
                 set(newRef, input).then(() => {
                     setEmployees(...employees, input)
                     navigate(-1)
+                    setInput(init)
                 })
             }
         }
-        setInput(init)
     }
     // console.log(emps);
 
@@ -76,7 +76,7 @@ const AddEmployee = () => {
             <div className="container">
                 <div className="col-4 m-auto">
                     <form action="" className='bg-light p-3 bor-rad lightslategrey shadow-lg' onSubmit={handleSubmit}>
-                        <h4 className='text-center mb-3'>{editMode ? "Update Data" : "Add New Employee"}</h4>
+                        <h4 className='text-center mb-3'>{editMode ? "Update Employee" : "New Employee"}</h4>
                         <div className="form-group mb-3">
                             <input type="text" placeholder="" name='name' value={input ? input.name : ''} onChange={handleChange}></input>
                             <label>Name</label>

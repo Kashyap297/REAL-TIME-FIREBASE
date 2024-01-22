@@ -5,6 +5,7 @@ import { get, onValue, ref, remove } from 'firebase/database'
 import { db } from './firebase'
 import bin from '../Component/images/bin.png'
 import edit from '../Component/images/editp.png'
+import page from '../Component/images/page.png'
 
 const Realtimefirebase = () => {
 
@@ -15,10 +16,18 @@ const Realtimefirebase = () => {
     // console.log(employees)
     const setInput = empDatas.setInput
     const input = empDatas.input
-    // const id = empDatas.id
     const setId = empDatas.setId
-    // const editMode = empDatas.editMode
     const setEditMode = empDatas.setEditMode
+
+    const [noRecord, setNoRecord] = useState(false)
+
+    useEffect(() => {
+        if (employees.length === 0) {
+            setNoRecord(true)
+        } else {
+            setNoRecord(false)
+        }
+    }, [employees])
 
     useEffect(() => {
         const userRef = ref(db, "Employees")
@@ -39,7 +48,7 @@ const Realtimefirebase = () => {
         get(userRef).then((item) => {
             var data = item.val()
             // console.log(data);
-            setInput({...input, ...data})
+            setInput({ ...input, ...data })
             setEditMode(true)
             setId(id)
         })
@@ -66,17 +75,17 @@ const Realtimefirebase = () => {
                                 <div className="d-flex align-items-center justify-content-between">
                                     <h3 className='m-0'>Real Time Firebase </h3>
                                     <div className="form-group col-3">
-                                        <input type="text" placeholder="Search Employee..." name='search'></input>
-                                        <label>Filters</label>
+                                        <input type="text" placeholder="Employee..." name='search'></input>
+                                        <label>Find</label>
                                     </div>
-                                    <div className="form-group col-3">
+                                    {/* <div className="form-group col-3">
                                         <input type="text" placeholder="Search Ott platform..." name='search'></input>
                                         <label>OTT</label>
-                                    </div>
-                                    <button className='btn btn-dark bor-rad'><i className="fa-solid fa-circle-up ms-2"></i></button>
+                                    </div> */}
+                                    <button className='btn btn-dark bor-rad'>SORT<i className="fa-solid fa-circle-up ms-2"></i></button>
                                     <div className="form-group col-2">
                                         <select className='bor-rad w-100 pyy-2'>
-                                            <option value="Term" className='pyy-2 bor-rad'>--Term--</option>
+                                            <option value="Term" className='pyy-2 bor-rad'>--Department--</option>
                                             <option value="Yearly" className='pyy-2 bor-rad'>Yearly</option>
                                             <option value="Quarterly" className='pyy-2 bor-rad'>Quarterly</option>
                                             <option value="Monthly" className='pyy-2 bor-rad'>Monthly</option>
@@ -87,7 +96,7 @@ const Realtimefirebase = () => {
                             <thead className='table-dark'>
                                 <tr>
                                     <th className='gr-text'>Sr.</th>
-                                    <th className='gr-text'>Name</th>
+                                    <th className='gr-text'>Employee Name</th>
                                     <th className='gr-text'>Position</th>
                                     <th className='gr-text'>Department</th>
                                     <th className='gr-text col-2' colSpan={2}>Action</th>
@@ -95,23 +104,32 @@ const Realtimefirebase = () => {
                             </thead>
                             <tbody className='table-group-divider'>
                                 {
-                                    employees.map((user, id) => {
-                                        return <tr key={id}>
-                                            <td>{id + 1}</td>
-                                            <td>{user.name}</td>
-                                            <td>{user.position}</td>
-                                            <td>{user.department}</td>
+                                    noRecord ? (
+                                        <>
+                                            <tr>
+                                                <td className='text-center fw-bold pe-0 py-3 fs-3 text-danger' colSpan={6}><img src={page} alt="" className='d-block m-auto' width="150px" />
+                                                    Empty Records</td>
+                                            </tr>
+                                        </>
+                                    ) : (
+                                        employees.map((user, id) => {
+                                            return <tr key={id}>
+                                                <td>{id + 1}</td>
+                                                <td>{user.name}</td>
+                                                <td>{user.position}</td>
+                                                <td>{user.department}</td>
+                                                <td className=''>
+                                                    <Link to={'/addemployee'} className="btn btn-light" onClick={() => handleEdit(user.id)}>
+                                                        <img src={edit} alt="" width="24px" />
+                                                    </Link></td>
+                                                <td className=''>
+                                                    <button className="btn btn-light" onClick={() => handleDelete(user.id)}>
+                                                        <img src={bin} alt="" width="24px" />
+                                                    </button></td>
+                                            </tr>
+                                        })
+                                    )
 
-                                            <td className=''>
-                                                <Link to={'/addemployee'} className="btn btn-light" onClick={() => handleEdit(user.id)}>
-                                                    <img src={edit} alt="" width="24px" />
-                                                </Link></td>
-                                            <td className=''>
-                                                <button className="btn btn-light" onClick={() => handleDelete(user.id)}>
-                                                    <img src={bin} alt="" width="24px" />
-                                                </button></td>
-                                        </tr>
-                                    })
                                 }
                             </tbody>
                         </table>
